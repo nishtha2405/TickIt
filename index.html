@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            width: 300px;
+            margin: 50px auto;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            display: flex;
+            justify-content: space-between;
+            background: #f4f4f4;
+            padding: 10px;
+            margin: 5px 0;
+        }
+        button {
+            margin-left: 10px;
+        }
+        .completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>To-Do List</h2>
+        <input type="text" id="taskInput" placeholder="Add a new task...">
+        <button onclick="addTask()">Add</button>
+        <ul id="taskList"></ul>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", loadTasks);
+        
+        function addTask() {
+            let input = document.getElementById("taskInput");
+            let taskText = input.value.trim();
+            if (taskText === "") return;
+            
+            let li = document.createElement("li");
+            li.innerHTML = `${taskText} 
+                <button onclick="editTask(this)">Edit</button>
+                <button onclick="toggleComplete(this)">Done</button>
+                <button onclick="removeTask(this)">Delete</button>`;
+            
+            document.getElementById("taskList").appendChild(li);
+            saveTasks();
+            input.value = "";
+        }
+        
+        function removeTask(button) {
+            button.parentElement.remove();
+            saveTasks();
+        }
+        
+        function editTask(button) {
+            let li = button.parentElement;
+            let newText = prompt("Edit your task:", li.firstChild.textContent.trim());
+            if (newText) {
+                li.firstChild.textContent = newText;
+                saveTasks();
+            }
+        }
+        
+        function toggleComplete(button) {
+            let li = button.parentElement;
+            li.classList.toggle("completed");
+            saveTasks();
+        }
+        
+        function saveTasks() {
+            let tasks = [];
+            document.querySelectorAll("#taskList li").forEach(li => {
+                tasks.push({
+                    text: li.firstChild.textContent.trim(),
+                    completed: li.classList.contains("completed")
+                });
+            });
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+        
+        function loadTasks() {
+            let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            tasks.forEach(task => {
+                let li = document.createElement("li");
+                if (task.completed) li.classList.add("completed");
+                li.innerHTML = `${task.text} 
+                    <button onclick="editTask(this)">Edit</button>
+                    <button onclick="toggleComplete(this)">Done</button>
+                    <button onclick="removeTask(this)">Delete</button>`;
+                document.getElementById("taskList").appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
+
+
