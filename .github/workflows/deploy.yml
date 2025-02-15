@@ -3,7 +3,7 @@ name: Deploy To-Do List to GitHub Pages
 on:
   push:
     branches:
-      - main  # Change this to your main branch
+      - main  # Deploy from main branch
 
 permissions:
   contents: write
@@ -19,5 +19,5 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages  
-          folder: .  
+          branch: main  # Deploy directly from main
+          folder: .  # Deploy all files in the root directory
